@@ -1,4 +1,4 @@
-An implementation of Hierarchical State Machine in ActionScript3.0
+An implementation of Hierarchical State Machine in ActionScript3.0 for AI bot/agent in a video games
 
 The implementation is almost similiar with FSM, but in HSM there are two types of state which extends BaseHSMState Class.
 1. Composite State: State which have a children
