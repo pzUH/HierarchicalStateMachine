@@ -1,0 +1,7 @@
+An implementation of Hierarchical State Machine in ActionScript3.0
+
+The implementation is almost similiar with FSM, but in HSM there are two types of state which extends BaseHSMState Class.
+1. Composite State: State which have a children
+2. Atomic State: State with no children
+
+So instead of implementing IState interface like on FSM one, in HSM both composite and atomic concrete states are extends BaseHSMState class.
