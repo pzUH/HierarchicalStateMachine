@@ -8,15 +8,19 @@ package com.pzuh.ai.hierarchicalstatemachine
 		
 		protected var level:int;
 		
+		protected var name:String;
+		
 		protected var myEntity:Object
 		
-		public function BaseHSMState(entity:Object, initState:BaseHSMState = null) 
+		public function BaseHSMState(entity:Object, initState:BaseHSMState = null, name:String = "state") 
 		{
 			childStateArray = new Array();
 			
 			myEntity = entity;
 			
 			this.initState = initState;
+			
+			this.name = name;
 		}
 		
 		public function addChildState(state:BaseHSMState):void
@@ -42,7 +46,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 		{
 			if (childStateArray.length > 0) 
 			{
-				for (var i:int = 0; i < childStateArray.length; i++)
+				for (var i:int = childStateArray.length - 1; i >= 0; i--)
 				{
 					childStateArray.splice(i, 1);
 				}
@@ -74,7 +78,12 @@ package com.pzuh.ai.hierarchicalstatemachine
 		public function getLevel():int
 		{
 			return level;
-		}		
+		}
+		
+		public function getName():int
+		{
+			return name;
+		}
 		
 		//make sure this three method are overriden by the concrete state
 		public function enter():void
