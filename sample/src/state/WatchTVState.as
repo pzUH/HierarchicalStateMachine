@@ -6,9 +6,9 @@ package state
 	
 	public class WatchTVState extends BaseHSMState
 	{
-		public function WatchTVState (entity:Object) 
+		public function WatchTVState (entity:Object, name:String) 
 		{
-			super(entity);
+			super(entity, name);	
 		}	
 		
 		override public function update():void

@@ -1,5 +1,7 @@
 package com.pzuh.ai.hierarchicalstatemachine 
 {
+	import com.pzuh.Basic;
+	
 	public class BaseHSMState
 	{
 		protected var parentState:BaseHSMState;
@@ -10,15 +12,19 @@ package com.pzuh.ai.hierarchicalstatemachine
 		
 		protected var name:String;
 		
-		protected var myEntity:Object
+		protected var myEntity:Object;
 		
-		public function BaseHSMState(entity:Object, initState:BaseHSMState = null, name:String = "state") 
+		protected var transitionArray:Array;
+		
+		protected var action:Object;
+		
+		public function BaseHSMState(entity:Object, name:String) 
 		{
 			childStateArray = new Array();
 			
 			myEntity = entity;
 			
-			this.initState = initState;
+			this.transitionArray = new Array();
 			
 			this.name = name;
 		}
@@ -42,6 +48,35 @@ package com.pzuh.ai.hierarchicalstatemachine
 			}
 		}
 		
+		public function addTransition(targetState:String, trigger:Function):void
+		{
+			var transitionObject:Object = new Object();
+			transitionObject.targetState = targetState;
+			transitionObject.trigger = trigger;			
+			
+			if (Basic.isElementOfArray(transitionArray, transitionObject))
+			{
+				throw new Error("ERROR: Duplicate transition detected");
+			}
+			else
+			{
+				transitionArray.push(transitionObject);
+			}
+		}
+		
+		public function addAction(update:Function, enter:Function = null, exit:Function = null):void
+		{
+			if (action != null)
+			{
+				throw new Error("ERROR: Action already defined");
+			}
+			
+			action = new Object();
+			action.update = update;
+			action.enter = enter;
+			action.exit = exit;
+		}
+		
 		private function removeChildState():void
 		{
 			if (childStateArray.length > 0) 
@@ -51,13 +86,35 @@ package com.pzuh.ai.hierarchicalstatemachine
 					childStateArray.splice(i, 1);
 				}
 				
-				childStateArray.length = 0;
+				childStateArray = null;
+			}
+		}
+		
+		private function removeTransition():void
+		{
+			if (transitionArray == null)
+			{
+				return;
+			}
+			
+			if (transitionArray.length > 0)
+			{
+				for (var i:int = transitionArray.length - 1; i >= 0; i--)
+				{
+					transitionArray.splice(i, 1);
+				}
+				
+				transitionArray = null;
 			}
 		}
 		
 		public function removeSelf():void
 		{
 			removeChildState();
+			
+			removeTransition();
+			
+			action = null;
 			
 			parentState = null;
 			initState = null;
@@ -80,7 +137,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 			return level;
 		}
 		
-		public function getName():int
+		public function getName():String
 		{
 			return name;
 		}
@@ -88,17 +145,42 @@ package com.pzuh.ai.hierarchicalstatemachine
 		//make sure this three method are overriden by the concrete state
 		public function enter():void
 		{
-			throw new Error("ERROR: enter() method must be overriden");
+			if (action!=null) 
+			{
+				action.enter.apply();
+			}
 		}
 		
 		public function update():void
 		{
-			throw new Error("ERROR: update() method must be overriden");
+			/* This block is used if you define the transition outside the state class.
+			   Make sure you call super.update() in the overriden method if you use it.
+			*/
+			if (transitionArray != null) 
+			{
+				for (var i:int = 0; i < transitionArray.length; i++)
+				{
+					if (transitionArray[i].trigger.apply() == true)
+					{
+						myEntity.changeState(transitionArray[i].targetState);
+						
+						return;
+					}
+				}
+			}
+			
+			if (action != null)
+			{
+				action.update.apply();
+			}
 		}
 		
 		public function exit():void
 		{
-			throw new Error("ERROR: exit() method must be overriden");
+			if (action!=null) 
+			{
+				action.exit.apply();
+			}
 		}
 	}
 }

@@ -6,9 +6,9 @@ package state
 	
 	public class SearchState extends BaseHSMState
 	{
-		public function SearchState(entity:Object) 
+		public function SearchState(entity:Object, name:String) 
 		{
-			super(entity);
+			super(entity, name);	
 		}
 		
 		override public function update():void

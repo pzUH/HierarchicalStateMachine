@@ -6,9 +6,9 @@ package state
 	
 	public class PutGoldState extends BaseHSMState
 	{
-		public function PutGoldState(entity:Object) 
+		public function PutGoldState(entity:Object, name:String) 
 		{
-			super(entity);
+			super(entity, name);	
 		}	
 		
 		override public function update():void

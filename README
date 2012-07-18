@@ -1,10 +1,6 @@
 An implementation of Hierarchical State Machine in ActionScript3.0 for AI bot/agent in a video games
 
-HSM is a FSM too, but unlike the traditional FSM, it can handle the states in hierarchy. You can define detailed states in a state and group states which have same target state.
-So it is better implementation of state machine if the agent have complex and a lot of states.
+This contains an base class for the concrete states. So you'll need to write the actions and transitions inside that class.
+But its also has option to create the state without creating a specific classes. The actions and transitions can be defined outside the state class.
 
-The implementation is almost similiar with FSM, but in HSM there are two types of state which extends BaseHSMState Class.
-1. Composite State: State which have a children
-2. Atomic State: State with no children
-
-So instead of implementing IState interface like on FSM one, in HSM both composite and atomic concrete states are extends BaseHSMState class.
+For the details to implements this HSM, please refer to the sample code.

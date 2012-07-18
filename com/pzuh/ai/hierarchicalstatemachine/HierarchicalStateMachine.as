@@ -1,17 +1,36 @@
 package com.pzuh.ai.hierarchicalstatemachine
 {
+	import com.pzuh.Basic;
 	public class HierarchicalStateMachine 
 	{
 		private var currentState:BaseHSMState;	
+		
+		private var stateArray:Array = new Array();
 		
 		public function HierarchicalStateMachine() 
 		{
 			currentState = null;
 		}	
 		
+		public function addState(states:Array):void
+		{
+			for (var i:int = 0; i < states.length; i++)
+			{
+				if (!Basic.isElementOfArray(stateArray, states[i])) 
+				{
+					stateArray.push(states[i]);
+				}
+			}
+		}
+		
 		//call this method in the game main loop to update the state machine
 		public function update():void
 		{
+			if (currentState == null)
+			{
+				return;
+			}
+			
 			currentState.update();
 			
 			updateAllParentState(currentState);
@@ -28,17 +47,19 @@ package com.pzuh.ai.hierarchicalstatemachine
 			}
 		}
 		
-		public function changeState(targetState:BaseHSMState):void
+		public function changeState(targetState:String):void
 		{
+			var nextState:BaseHSMState = getState(targetState);		
+			
 			if (currentState != null)
 			{
 				currentState.exit();
-				exitParentState(currentState, targetState.getLevel());
+				exitParentState(currentState, nextState.getLevel());
 				
 				currentState = null;
 			}
 			
-			currentState = getLowestLevelState(targetState);
+			currentState = getLowestLevelState(nextState);
 			currentState.enter();
 		}
 		
@@ -82,8 +103,29 @@ package com.pzuh.ai.hierarchicalstatemachine
 			return currentState;
 		}
 		
+		public function getState(name:String):BaseHSMState
+		{
+			for (var i:int = 0; i < stateArray.length; i++)
+			{
+				if (stateArray[i].getName() == name)
+				{
+					return stateArray[i];
+				}
+			}
+			
+			return null;
+		}
+		
 		public function removeSelf():void
 		{
+			for (var i:int = stateArray.length - 1; i >= 0; i--)
+			{
+				stateArray[i].removeSelf();
+				stateArray.splice(i, 1);
+			}
+			
+			stateArray = null;
+			
 			currentState = null;
 		}
 	}

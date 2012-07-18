@@ -9,15 +9,6 @@ package entity
 	{
 		private var myStateMachine:HierarchicalStateMachine;
 		
-		private var atMineState:BaseHSMState;
-		private var atHomeState:BaseHSMState;
-		private var digState:BaseHSMState;
-		private var searchState:BaseHSMState;
-		private var smashRockState:BaseHSMState;
-		private var putGoldState:BaseHSMState;
-		private var watchTVState:BaseHSMState;
-		private var sleepState:BaseHSMState;
-		
 		public static const AT_MINE_STATE:String = "at_mine_state";
 		public static const AT_HOME_STATE:String = "at_home_state";
 		public static const DIG_STATE:String = "dig_state";
@@ -28,111 +19,106 @@ package entity
 		public static const SLEEP_STATE:String = "sleep_state";
 		
 		public function Miner() 
-		{
+		{			
 			initState();
-			
-			myStateMachine = new HierarchicalStateMachine();
-			changeState(AT_HOME_STATE);
 		}
 		
 		private function initState():void
 		{
-			//init all atomic state first so it can added to the composite states
-			searchState = new SearchState(this);
-			smashRockState = new SmashRockState(this);
-			putGoldState = new PutGoldState(this);	
-			sleepState = new SleepState(this);
-			watchTVState = new WatchTVState(this);
+			myStateMachine = new HierarchicalStateMachine();
 			
-			//init all composite states, and don't forget to add their respective children
-			digState = new DigState(this);	
+			//initialize all atomic state first so it can added to the composite states
+			var searchState:BaseHSMState = new SearchState(this, SEARCH_STATE);
+			var smashRockState:BaseHSMState = new SmashRockState(this, SMASH_ROCK_STATE);
+			var putGoldState:BaseHSMState = new PutGoldState(this, PUT_GOLD_STATE);
+			var sleepState:BaseHSMState = new SleepState(this, SLEEP_STATE);
+			var watchTVState:BaseHSMState = new WatchTVState(this, WATCH_TV_STATE);
+			
+			//initialize all composite states, and don't forget to add all of their respective children
+			var digState:BaseHSMState = new DigState(this, DIG_STATE);	
 			digState.addChildState(smashRockState);
 			digState.addChildState(putGoldState);
 			
-			atMineState = new AtMineState(this);
+			var atMineState:BaseHSMState = new AtMineState(this, AT_MINE_STATE);
 			atMineState.addChildState(digState);
-			atMineState.addChildState(searchState);			
+			atMineState.addChildState(searchState);	
 			
-			atHomeState = new AtHomeState(this);	
+			//This shows how to define transition outside the concrete class
+			atMineState.addTransition(AT_HOME_STATE, goHome);
+			
+			/*atHomeState doesn't have any concrete state class.
+			I just want to show you how to create a state without creating a concrete state
+			So you'll need to define its transitions also the actions*/
+			var atHomeState:BaseHSMState = new BaseHSMState(this, AT_HOME_STATE);	
 			atHomeState.addChildState(watchTVState);
-			atHomeState.addChildState(sleepState);
+			atHomeState.addChildState(sleepState);			
+			
+			//define the transitions and actions
+			atHomeState.addTransition(AT_MINE_STATE, goToTheMine);			
+			atHomeState.addAction(inHome, enterHome, exitHome);
+			
+			//store the states to stateArray
+			myStateMachine.addState(
+			[atHomeState, atMineState, digState, watchTVState, sleepState, putGoldState, smashRockState, searchState]);
+			
+			//set the initial state
+			myStateMachine.changeState(AT_HOME_STATE);
 		}
 		
 		public function update():void
 		{
+			//don't forget to call update method, so the machine will be updated regularly.
 			myStateMachine.update();
 		}
 		
 		public function changeState(state:String):void
 		{
-			var tempState:BaseHSMState;
-			
-			switch(state)
-			{
-				case AT_HOME_STATE:
-					tempState = atHomeState;
-					break;
-					
-				case AT_MINE_STATE:
-					tempState = atMineState;
-					break;
-					
-				case DIG_STATE:
-					tempState = digState;
-					break;
-					
-				case SEARCH_STATE:
-					tempState = searchState;
-					break;
-					
-				case SMASH_ROCK_STATE:
-					tempState = smashRockState;
-					break;
-					
-				case PUT_GOLD_STATE:
-					tempState = putGoldState;
-					break;
-					
-				case WATCH_TV_STATE:
-					tempState = watchTVState;
-					break;
-					
-				case SLEEP_STATE:
-					tempState = sleepState;
-					break;
-			}
-			
-			myStateMachine.changeState(tempState);
+			myStateMachine.changeState(state);
 		}
 		
-		public function getStateMachine():HierarchicalStateMachine
+		private function goHome():Boolean
 		{
-			return myStateMachine;
+			var prob:int = Math.ceil(Math.random() * 15);
+			
+			if (prob == 1)
+			{
+				return true;
+			}
+			
+			return false;
+		}
+		
+		private function enterHome():void
+		{
+			trace("Bob: Entering mah home");
+		}
+		
+		private function exitHome():void
+		{
+			trace("Bob: Leavin' mah tiny old shack");
+		}
+		
+		private function inHome():void
+		{
+			trace("Bob: Home sweet home");
+		}
+		
+		private function goToTheMine():Boolean
+		{
+			var prob:int = Math.ceil(Math.random() * 15);
+			
+			if (prob == 1)
+			{
+				return true;
+			}
+			
+			return false;
 		}
 		
 		public function removeSelf():void
 		{
 			myStateMachine.removeSelf();
 			myStateMachine = null;
-			
-			//remove all states
-			digState.removeSelf();
-			atHomeState.removeSelf();
-			atMineState.removeSelf();
-			putGoldState.removeSelf();
-			searchState.removeSelf();
-			sleepState.removeSelf();
-			smashRockState.removeSelf();
-			watchTVState.removeSelf();
-			
-			digState = null;
-			atHomeState = null;
-			atMineState = null;
-			putGoldState = null;
-			searchState = null;
-			sleepState = null;
-			smashRockState = null;
-			watchTVState = null;
 		}
 	}
 }

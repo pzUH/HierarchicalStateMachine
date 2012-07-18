@@ -6,9 +6,9 @@ package state
 	
 	public class SleepState extends BaseHSMState
 	{
-		public function SleepState(entity:Object) 
+		public function SleepState(entity:Object, name:String) 
 		{
-			super(entity);		
+			super(entity, name);			
 		}
 		
 		override public function update():void

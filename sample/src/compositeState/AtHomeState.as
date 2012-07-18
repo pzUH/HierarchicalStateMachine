@@ -6,21 +6,16 @@ package compositeState
 	
 	public class AtHomeState extends BaseHSMState
 	{
-		public function AtHomeState(entity:Object, initState:BaseHSMState = null) 
+		public function AtHomeState(entity:Object, name:String) 
 		{
-			super(entity,initState);	
+			super(entity, name);	
 		}		
 		
 		override public function update():void
 		{
+			super.update();
+			
 			trace("Bob: Home sweet home");
-			
-			var prob:int = Math.ceil(Math.random() * 5);
-			
-			if (prob == 1)
-			{
-				myEntity.changeState(Miner.AT_MINE_STATE);
-			}
 		}
 		
 		override public function enter():void

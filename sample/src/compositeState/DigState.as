@@ -6,9 +6,9 @@ package compositeState
 	
 	public class DigState extends BaseHSMState
 	{
-		public function DigState(entity:Object, initState:BaseHSMState = null) 
+		public function DigState(entity:Object, name:String) 
 		{
-			super(entity,initState);
+			super(entity, name);	
 		}
 		
 		override public function update():void

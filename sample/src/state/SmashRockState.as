@@ -6,9 +6,9 @@ package state
 	
 	public class SmashRockState extends BaseHSMState
 	{
-		public function SmashRockState(entity:Object) 
+		public function SmashRockState(entity:Object, name:String) 
 		{
-			super(entity);
+			super(entity, name);	
 		}	
 		
 		override public function update():void

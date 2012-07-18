@@ -6,21 +6,16 @@ package compositeState
 	
 	public class AtMineState extends BaseHSMState
 	{		
-		public function AtMineState(entity:Object, initState:BaseHSMState = null) 
+		public function AtMineState(entity:Object, name:String) 
 		{
-			super(entity,initState);				
+			super(entity, name);			
 		}	
 		
 		override public function update():void
 		{
+			super.update();
+			
 			trace("Bob: Mining, mining, mining");
-			
-			var prob:int = Math.ceil(Math.random() * 15);
-			
-			if (prob == 1)
-			{
-				myEntity.changeState(Miner.AT_HOME_STATE);
-			}
 		}
 		
 		override public function enter():void
