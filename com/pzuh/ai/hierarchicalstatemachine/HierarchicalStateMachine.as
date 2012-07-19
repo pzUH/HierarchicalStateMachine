@@ -1,6 +1,5 @@
 package com.pzuh.ai.hierarchicalstatemachine
 {
-	import com.pzuh.Basic;
 	public class HierarchicalStateMachine 
 	{
 		private var currentState:BaseHSMState;	
@@ -16,7 +15,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 		{
 			for (var i:int = 0; i < states.length; i++)
 			{
-				if (!Basic.isElementOfArray(stateArray, states[i])) 
+				if (stateArray.indexOf(states[i]) == -1)
 				{
 					stateArray.push(states[i]);
 				}

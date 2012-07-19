@@ -1,7 +1,6 @@
 package com.pzuh.ai.hierarchicalstatemachine 
 {
-	import com.pzuh.Basic;
-	
+
 	public class BaseHSMState
 	{
 		protected var parentState:BaseHSMState;
@@ -24,7 +23,9 @@ package com.pzuh.ai.hierarchicalstatemachine
 			
 			myEntity = entity;
 			
-			this.transitionArray = new Array();
+			transitionArray = new Array();
+			
+			action = new Object();
 			
 			this.name = name;
 		}
@@ -42,10 +43,6 @@ package com.pzuh.ai.hierarchicalstatemachine
 				state.parentState = this;
 				state.level = this.level + 1;
 			}
-			else
-			{
-				throw new Error("ERROR: Duplicate state detected");
-			}
 		}
 		
 		public function addTransition(targetState:String, trigger:Function):void
@@ -54,11 +51,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 			transitionObject.targetState = targetState;
 			transitionObject.trigger = trigger;			
 			
-			if (Basic.isElementOfArray(transitionArray, transitionObject))
-			{
-				throw new Error("ERROR: Duplicate transition detected");
-			}
-			else
+			if (transitionArray.indexOf(transitionObject) == -1)
 			{
 				transitionArray.push(transitionObject);
 			}
@@ -66,12 +59,6 @@ package com.pzuh.ai.hierarchicalstatemachine
 		
 		public function addAction(update:Function, enter:Function = null, exit:Function = null):void
 		{
-			if (action != null)
-			{
-				throw new Error("ERROR: Action already defined");
-			}
-			
-			action = new Object();
 			action.update = update;
 			action.enter = enter;
 			action.exit = exit;
@@ -92,11 +79,6 @@ package com.pzuh.ai.hierarchicalstatemachine
 		
 		private function removeTransition():void
 		{
-			if (transitionArray == null)
-			{
-				return;
-			}
-			
 			if (transitionArray.length > 0)
 			{
 				for (var i:int = transitionArray.length - 1; i >= 0; i--)
@@ -145,7 +127,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 		//make sure this three method are overriden by the concrete state
 		public function enter():void
 		{
-			if (action!=null) 
+			if (action.enter!=null) 
 			{
 				action.enter.apply();
 			}
@@ -156,7 +138,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 			/* This block is used if you define the transition outside the state class.
 			   Make sure you call super.update() in the overriden method if you use it.
 			*/
-			if (transitionArray != null) 
+			if (transitionArray.length > 0) 
 			{
 				for (var i:int = 0; i < transitionArray.length; i++)
 				{
@@ -169,7 +151,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 				}
 			}
 			
-			if (action != null)
+			if (action.update != null)
 			{
 				action.update.apply();
 			}
@@ -177,7 +159,7 @@ package com.pzuh.ai.hierarchicalstatemachine
 		
 		public function exit():void
 		{
-			if (action!=null) 
+			if (action.exit !=null) 
 			{
 				action.exit.apply();
 			}
