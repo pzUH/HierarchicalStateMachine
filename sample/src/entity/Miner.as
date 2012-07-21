@@ -23,6 +23,7 @@ package entity
 			initState();
 		}
 		
+		//this is the example for initializing the state machine
 		private function initState():void
 		{
 			myStateMachine = new HierarchicalStateMachine();
@@ -59,7 +60,7 @@ package entity
 			
 			//store the states to stateArray
 			myStateMachine.addState(
-			[atHomeState, atMineState, digState, watchTVState, sleepState, putGoldState, smashRockState, searchState]);
+			atHomeState, atMineState, digState, watchTVState, sleepState, putGoldState, smashRockState, searchState);
 			
 			//set the initial state
 			myStateMachine.changeState(AT_HOME_STATE);

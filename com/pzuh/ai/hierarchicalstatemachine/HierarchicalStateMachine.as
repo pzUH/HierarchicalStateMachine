@@ -11,13 +11,13 @@ package com.pzuh.ai.hierarchicalstatemachine
 			currentState = null;
 		}	
 		
-		public function addState(states:Array):void
+		public function addState(...rest):void
 		{
-			for (var i:int = 0; i < states.length; i++)
+			for (var i:int = 0; i < rest.length; i++)
 			{
-				if (stateArray.indexOf(states[i]) == -1)
+				if (stateArray.indexOf(rest[i]) == -1)
 				{
-					stateArray.push(states[i]);
+					stateArray.push(rest[i]);
 				}
 			}
 		}
